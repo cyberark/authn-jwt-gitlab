@@ -15,8 +15,9 @@ This project creates a Docker image that includes a Go binary that can be used t
   * [Conjur Policy to create identity for GitLab Repository](https://github.com/infamousjoeg/conjur-policies/blob/16f7375b604646a48b8b59ac9ddc011b6c8a08c6/ci/gitlab/root.yml#L45)
   * [Conjur Policy to grant GitLab Repository identity to use synchronized secrets from CyberArk Vault](https://github.com/infamousjoeg/conjur-policies/blob/84b451b5025fd1bb5fc86c601d172cb27da81b00/grants/grants_ci.yml#L41)
   * [Conjur Policy to grant GitLab Repository identity ability to authenticate using authn-jwt/gitlab web service](https://github.com/infamousjoeg/conjur-policies/blob/84b451b5025fd1bb5fc86c601d172cb27da81b00/grants/grants_authn.yml#L23)
-* [Setup GitLab with runner](#setup-gitlab-with-runner)
-* [Keep Conjur Server up and running with policies settings](#keep-conjur-server-up-and-running-with-policies-settings)
+* Example
+  * [Setup GitLab with runner](#setup-gitlab-with-runner)
+  * [Keep Conjur Server up and running with policies settings](#keep-conjur-server-up-and-running-with-policies-settings)
 * [Usage](#usage)
 
 ## Setup GitLab with runner
@@ -77,7 +78,7 @@ ubuntu:
 
 ```yaml
 variables:
-  CONJUR_APPLIANCE_URL: "http://35.223.135.74:8080"
+  CONJUR_APPLIANCE_URL: "https://conjur.joegarcia.dev"
   CONJUR_ACCOUNT: "myConjurAccount"
   CONJUR_AUTHN_JWT_SERVICE_ID: "gitlab"
 
@@ -91,7 +92,6 @@ ubuntu:
   script:
     - export TEST_USERNAME=$(CONJUR_SECRET_ID="Dev-Team-credential1" /authn-jwt-gitlab)
     - export TEST_PASSWORD=$(CONJUR_SECRET_ID="Dev-Team-credential2" /authn-jwt-gitlab)
-    - echo $ID_TOKEN_1 | base64
     - env | grep TEST_
 
 alpine:
@@ -104,7 +104,6 @@ alpine:
   script:
     - export TEST_USERNAME=$(CONJUR_SECRET_ID="Dev-Team-credential1" /authn-jwt-gitlab)
     - export TEST_PASSWORD=$(CONJUR_SECRET_ID="Dev-Team-credential2" /authn-jwt-gitlab)
-    - echo $ID_TOKEN_2 | base64
     - env | grep TEST_
 
 ubi-fips:
@@ -117,7 +116,6 @@ ubi-fips:
   script:
     - export TEST_USERNAME=$(CONJUR_SECRET_ID="Dev-Team-credential1" /authn-jwt-gitlab)
     - export TEST_PASSWORD=$(CONJUR_SECRET_ID="Dev-Team-credential2" /authn-jwt-gitlab)
-    - echo $ID_TOKEN_3 | base64
     - env | grep TEST_
 ```
 
