@@ -60,17 +60,17 @@ pipeline {
       }
     }
 
-    stage('Build') {
-      steps {
-        // Perform any builds here
-      }
-    }
+//     stage('Build') {
+//       steps {
+//         // Perform any builds here
+//       }
+//     }
 
-    stage('Test') {
-      steps {
-        // Perform any testing here
-      }
-    }
+//     stage('Test') {
+//       steps {
+//         // Perform any testing here
+//       }
+//     }
   
     stage('Release') {
       when {
