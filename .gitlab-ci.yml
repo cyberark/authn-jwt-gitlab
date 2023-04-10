@@ -1,5 +1,5 @@
 variables:
-  CONJUR_APPLIANCE_URL: "http://35.223.135.74:8080"
+  CONJUR_APPLIANCE_URL: "https://conjur.joegarcia.dev"
   CONJUR_ACCOUNT: "myConjurAccount"
   CONJUR_AUTHN_JWT_SERVICE_ID: "gitlab"
 
@@ -13,7 +13,6 @@ ubuntu:
   script:
     - export TEST_USERNAME=$(CONJUR_SECRET_ID="Dev-Team-credential1" /authn-jwt-gitlab)
     - export TEST_PASSWORD=$(CONJUR_SECRET_ID="Dev-Team-credential2" /authn-jwt-gitlab)
-    - echo $ID_TOKEN_1 | base64
     - env | grep TEST_
 
 
@@ -27,7 +26,6 @@ alpine:
   script:
     - export TEST_USERNAME=$(CONJUR_SECRET_ID="Dev-Team-credential1" /authn-jwt-gitlab)
     - export TEST_PASSWORD=$(CONJUR_SECRET_ID="Dev-Team-credential2" /authn-jwt-gitlab)
-    - echo $ID_TOKEN_2 | base64
     - env | grep TEST_
 
 
@@ -41,5 +39,4 @@ ubi-fips:
   script:
     - export TEST_USERNAME=$(CONJUR_SECRET_ID="Dev-Team-credential1" /authn-jwt-gitlab)
     - export TEST_PASSWORD=$(CONJUR_SECRET_ID="Dev-Team-credential2" /authn-jwt-gitlab)
-    - echo $ID_TOKEN_3 | base64
     - env | grep TEST_
