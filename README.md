@@ -41,7 +41,7 @@ docker exec -it gitlab-runner-temp gitlab-runner register
 ## Keep Conjur Server up and running with policies settings
 ### Setup Conjur server
 * [Conjur setup](https://github.com/cyberark/conjur-quickstart)
-* Conjur policies setup
+* Conjur policy files for reference
 ```yaml
   * authn-jwt-gitlab/policy-gitlab-jwt/policy1.yml
   * authn-jwt-gitlab/policy-gitlab-jwt/policy2.yml
