@@ -9,8 +9,9 @@ This project creates a Docker image that includes a Go binary that can be used t
 ## Requirements
 
 * Docker and access to DockerHub
-* GitLab
-* GitLab self hosted Runner
+* Golang 1.20.2+
+* GitLab 15.11.2+
+* GitLab self hosted Runner v15.8.2+
 * Conjur Secrets Manager Open Source v1.1+
 
 ## Setup GitLab and GitLab runner on docker
