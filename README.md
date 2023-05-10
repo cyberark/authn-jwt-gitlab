@@ -16,8 +16,7 @@ This project creates a Docker image that includes a Go binary that can be used t
 * Conjur Enterprise 12.5+
 
 ## Setup Self hosted GitLab on docker
-
-#### We need to pass GITLAB_ADDRESS value without http/https and port number , for example gitlab.example.com
+Provide GITLAB_ADDRESS value without http/https and port number , for example gitlab.example.com
 
 ```yaml
 #!/bin/bash
@@ -33,7 +32,7 @@ GITLAB_ADDRESS=
 # GitLab HTTP port
 GITLAB_HTTP_PORT=9080
 # GitLab admin user password
-GITLAB_ROOT_PASSWORD=
+GITLAB_ROOT_PASSWORD=pqr@123
 #============ Deploying GitLab ===============
 $SUDO $CONTAINER_MGR run --detach \
   --hostname "$GITLAB_ADDRESS" \
@@ -46,8 +45,7 @@ $SUDO $CONTAINER_MGR run --detach \
   "$CONTAINER_IMG"
 ```
 ## Setup Self hosted GitLab Runner on docker
-
-#### To get GITLAB_REGISTRATION_TOKEN value , we create project in Gitlab and then we need to follow these steps - Go to your project -> settings -> CI/CD -> Runner . Inside Runner section , we will get GITLAB_REGISTRATION_TOKEN and GITLAB_HOST details .
+To get GITLAB_REGISTRATION_TOKEN value , create project in Gitlab and Go to your project -> settings -> CI/CD -> Runner. From Runner section get GITLAB_REGISTRATION_TOKEN and GITLAB_HOST details .
 
 ```yaml
 #!/bin/bash
