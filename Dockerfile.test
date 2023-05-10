@@ -1,0 +1,50 @@
+FROM golang:1.18-alpine
+LABEL org.opencontainers.image.authors="CyberArk Software Ltd."
+LABEL id="authn-jwt-gitlab-test-runner"
+
+# On CyberArk dev laptops, golang module dependencies are downloaded with a
+# corporate proxy in the middle. For these connections to succeed we need to
+# configure the proxy CA certificate in build containers.
+#
+# To allow this script to also work on non-CyberArk laptops where the CA
+# certificate is not available, we copy the (potentially empty) directory
+# and update container certificates based on that, rather than rely on the
+# CA file itself.
+RUN echo "PWD is in beginning : $PWD"
+
+# ADD build_ca_certificate /usr/local/share/ca-certificates/
+# RUN update-ca-certificates
+
+CMD /bin/bash
+
+
+
+RUN apk add -u curl \
+               gcc \
+               git \
+               bash \
+               mercurial \
+               musl-dev
+
+# RUN apt install -y bash
+
+RUN go install github.com/jstemmer/go-junit-report@latest && \
+    go install github.com/axw/gocov/gocov@latest && \
+    go install github.com/AlekSi/gocov-xml@latest
+
+WORKDIR /authn-jwt-gitlab
+
+RUN echo "PWD is end : $PWD"
+
+COPY go.mod go.sum /authn-jwt-gitlab/
+
+RUN go mod download
+
+COPY . .
+
+# CMD [ "/bin/bash" ]
+
+# ENTRYPOINT [ "go", "test", "-v", "-timeout", "3m", "-tags=dev" ]
+
+# ENTRYPOINT [ "go", "test", "-v", "./..."]
+

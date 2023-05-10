@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 
-	"github.com/infamousjoeg/authn-jwt-gitlab/internal/conjurapi/response"
+	"github.com/cyberark/authn-jwt-gitlab/internal/conjurapi/response"
 )
 
 type ResourceFilter struct {

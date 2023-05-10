@@ -1,6 +1,6 @@
 FROM golang:1.19 as builder
 
-WORKDIR /go/src/github.com/infamousjoeg/authn-jwt-gitlab
+WORKDIR /go/src/github.com/cyberark/authn-jwt-gitlab
 COPY . .
 
 RUN go get -d -v ./...
@@ -8,7 +8,7 @@ RUN go install -v ./...
 
 FROM golang:1.19-alpine as builder-alpine
 
-WORKDIR /go/src/github.com/infamousjoeg/authn-jwt-gitlab
+WORKDIR /go/src/github.com/cyberark/authn-jwt-gitlab
 COPY . .
 
 RUN go get -d -v ./...

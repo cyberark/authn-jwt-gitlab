@@ -1,4 +1,4 @@
-module github.com/infamousjoeg/authn-jwt-gitlab
+module github.com/cyberark/authn-jwt-gitlab
 
 go 1.18
 

@@ -3,7 +3,7 @@ package conjurapi
 import (
 	"io"
 
-	"github.com/infamousjoeg/authn-jwt-gitlab/internal/conjurapi/response"
+	"github.com/cyberark/authn-jwt-gitlab/internal/conjurapi/response"
 )
 
 // PolicyMode defines the server-sized behavior when loading a policy.
