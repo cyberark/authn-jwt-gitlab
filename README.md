@@ -10,11 +10,14 @@ This project creates a Docker image that includes a Go binary that can be used t
 
 * Docker and access to DockerHub
 * Golang 1.20.2+
-* GitLab 15.11.2+
-* GitLab self hosted Runner v15.8.2+
-* Conjur Secrets Manager Open Source v1.1+
+* GitLab on Docker (gitlab/gitlab-ce:15.11.2-ce.0+)
+* GitLab Runner on Docker (gitlab/gitlab-runner:v15.8.2+)
+* Conjur OSS 1.9+
+* Conjur Enterprise 12.5+
 
-## Setup GitLab and GitLab runner on docker
+## Setup Self hosted GitLab on docker
+
+#### We need to pass GITLAB_ADDRESS value without http/https and port number , for example gitlab.example.com
 
 ```yaml
 #!/bin/bash
@@ -42,6 +45,9 @@ $SUDO $CONTAINER_MGR run --detach \
   --env GITLAB_OMNIBUS_CONFIG="external_url 'http://$GITLAB_ADDRESS:$GITLAB_HTTP_PORT/';" \
   "$CONTAINER_IMG"
 ```
+## Setup Self hosted GitLab Runner on docker
+
+#### To get GITLAB_REGISTRATION_TOKEN value , we create project in Gitlab and then we need to follow these steps - Go to your project -> settings -> CI/CD -> Runner . Inside Runner section , we will get GITLAB_REGISTRATION_TOKEN and GITLAB_HOST details .
 
 ```yaml
 #!/bin/bash
