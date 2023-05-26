@@ -5,7 +5,7 @@ import (
 	"log"
 	"os"
 
-	"github.com/infamousjoeg/authn-jwt-gitlab/internal/conjurapi"
+	"github.com/cyberark/authn-jwt-gitlab/internal/conjurapi"
 )
 
 // Environment variables to define:

@@ -3,7 +3,7 @@ package conjurapi
 import (
 	"testing"
 
-	"github.com/infamousjoeg/authn-jwt-gitlab/internal/conjurapi/authn"
+	"github.com/cyberark/authn-jwt-gitlab/internal/conjurapi/authn"
 	"github.com/stretchr/testify/assert"
 )
 

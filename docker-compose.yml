@@ -1,0 +1,50 @@
+version: '2.1'
+services:
+  postgres:
+    image: postgres:9.3
+
+  conjur:
+    image: cyberark/conjur:edge
+    command: server -a cucumber
+    environment:
+      DATABASE_URL: postgres://postgres@postgres/postgres
+      CONJUR_DATA_KEY:
+      RAILS_ENV: development
+    depends_on:
+      - postgres
+    ports:
+       - "8084"
+
+  conjur-server:
+    image: nginx:alpine
+    ports:
+      - "443:443"
+    volumes:
+      - ./test/https_config/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./test/https_config/conjur.conf:/etc/nginx/sites-enabled/conjur.conf:ro
+      - ./test/https_config/dhparams.pem:/etc/nginx/dhparams.pem:ro
+      - ./test/https_config/conjur.crt:/cert/tls.crt:ro
+      - ./test/https_config/conjur.key:/cert/tls.key:ro
+      - ./test/https_config/ca.crt:/ca/tls.crt:ro
+    depends_on: [ conjur ]
+
+  conjur_test:
+    build:
+      context: .
+      dockerfile: Dockerfile.test
+    depends_on:
+      - conjur
+    volumes:
+      - ./output:/authn-jwt-gitlab/output
+    environment:
+      CONJUR_APPLIANCE_URL:
+      CONJUR_ACCOUNT:
+      CONJUR_AUTHN_LOGIN:
+      CONJUR_DATA_KEY:
+      CONJUR_AUTHN_API_KEY:
+
+  cli5:
+    image: cyberark/conjur-cli:5
+    environment:
+      CONJUR_APPLIANCE_URL: http://conjur
+      CONJUR_ACCOUNT: cucumber

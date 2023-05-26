@@ -14,8 +14,8 @@ import (
 	"time"
 
 	"github.com/bgentry/go-netrc/netrc"
-	"github.com/infamousjoeg/authn-jwt-gitlab/internal/conjurapi/authn"
-	"github.com/infamousjoeg/authn-jwt-gitlab/internal/conjurapi/logging"
+	"github.com/cyberark/authn-jwt-gitlab/internal/conjurapi/authn"
+	"github.com/cyberark/authn-jwt-gitlab/internal/conjurapi/logging"
 )
 
 type Authenticator interface {

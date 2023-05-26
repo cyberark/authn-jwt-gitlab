@@ -1,0 +1,24 @@
+- !policy
+  id: gitlab-apps
+  body:
+
+      # Group of hosts that can authenticate using this JWT Authenticator
+    - !group
+
+        # `gitlab_name` is the primary identifying claim
+    - &hosts
+      - !host
+        id: cyberark4
+        annotations:
+          description: Host identity for authn-jwt-gitlab project in root namespace within GitLab
+          authn-jwt/gitlab/ref: main
+          authn-jwt/gitlab/project_path: cyberark4/authn-jwt-gitlab
+
+    # Grant all hosts in collection above to be members of projects group
+    - !grant
+      role: !group
+      members: *hosts
+
+- !grant
+  role: !group conjur/authn-jwt/gitlab/apps
+  member: !group gitlab-apps

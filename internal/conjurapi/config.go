@@ -11,7 +11,7 @@ import (
 	"github.com/sirupsen/logrus"
 	"gopkg.in/yaml.v2"
 
-	"github.com/infamousjoeg/authn-jwt-gitlab/internal/conjurapi/logging"
+	"github.com/cyberark/authn-jwt-gitlab/internal/conjurapi/logging"
 )
 
 var supportedAuthnTypes = []string{"authn", "ldap"}

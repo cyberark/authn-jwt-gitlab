@@ -1,0 +1,30 @@
+#!/usr/bin/env bash
+
+set -eo pipefail
+
+# Navigate to the bin directory (where this script lives) to ensure we can run this script
+# from anywhere.
+cd "$(dirname "$0")"
+
+. ./build_utils
+
+function main() {
+    local REPO_ROOT
+    local CONTAINER_IMAGE_AND_TAG
+    REPO_ROOT="$(repo_root)"
+    Stringval="ubuntu alpine ubi"
+
+    for target in $Stringval; do
+        CONTAINER_IMAGE_AND_TAG="authn-jwt-gitlab:${target}$(project_version_with_commit)"
+        echo "Building ${CONTAINER_IMAGE_AND_TAG} container image" 
+        docker build \
+            --tag "${CONTAINER_IMAGE_AND_TAG}" \
+            --target "${target}" \
+            --rm \
+            --file "${REPO_ROOT}/Dockerfile" \
+            "${REPO_ROOT}"
+        echo "Check target value inside build main function ${target}"
+    done
+}
+
+main

@@ -6,7 +6,7 @@ import (
 	"io/ioutil"
 	"net/http"
 
-	"github.com/infamousjoeg/authn-jwt-gitlab/internal/conjurapi/logging"
+	"github.com/cyberark/authn-jwt-gitlab/internal/conjurapi/logging"
 )
 
 func readBody(resp *http.Response) ([]byte, error) {

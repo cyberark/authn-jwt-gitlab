@@ -7,8 +7,8 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/infamousjoeg/authn-jwt-gitlab/internal/conjurapi/authn"
-	"github.com/infamousjoeg/authn-jwt-gitlab/internal/conjurapi/response"
+	"github.com/cyberark/authn-jwt-gitlab/internal/conjurapi/authn"
+	"github.com/cyberark/authn-jwt-gitlab/internal/conjurapi/response"
 	"github.com/stretchr/testify/assert"
 )
 

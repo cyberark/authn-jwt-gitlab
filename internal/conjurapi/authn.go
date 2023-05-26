@@ -6,8 +6,8 @@ import (
 	"io"
 	"net/http"
 
-	"github.com/infamousjoeg/authn-jwt-gitlab/internal/conjurapi/authn"
-	"github.com/infamousjoeg/authn-jwt-gitlab/internal/conjurapi/response"
+	"github.com/cyberark/authn-jwt-gitlab/internal/conjurapi/authn"
+	"github.com/cyberark/authn-jwt-gitlab/internal/conjurapi/response"
 )
 
 func (c *Client) RefreshToken() (err error) {

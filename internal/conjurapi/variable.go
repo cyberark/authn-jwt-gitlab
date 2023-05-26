@@ -1,14 +1,14 @@
 package conjurapi
 
 import (
+	"errors"
 	"io"
 	"net/http"
-	"errors"
 
-	"encoding/json"
 	"encoding/base64"
+	"encoding/json"
 
-	"github.com/infamousjoeg/authn-jwt-gitlab/internal/conjurapi/response"
+	"github.com/cyberark/authn-jwt-gitlab/internal/conjurapi/response"
 )
 
 // RetrieveBatchSecrets fetches values for all variables in a slice using a
@@ -98,8 +98,8 @@ func (c *Client) retrieveBatchSecrets(variableIDs []string, base64Flag bool) (ma
 	if base64Flag && resp.Header.Get("Content-Encoding") != "base64" {
 		return nil, errors.New(
 			"Conjur response is not Base64-encoded. " +
-			"The Conjur version may not be compatible with this function - " +
-			"try using RetrieveBatchSecrets instead." )
+				"The Conjur version may not be compatible with this function - " +
+				"try using RetrieveBatchSecrets instead.")
 	}
 
 	jsonResponse := map[string]string{}
