@@ -20,7 +20,6 @@ pipeline {
   }
 
   stages {
-
     // Generates a VERSION file based on the current build number and latest version in CHANGELOG.md
     stage('Validate Changelog and set version') {
       steps {
