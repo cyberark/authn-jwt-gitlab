@@ -71,7 +71,7 @@ $SUDO $CONTAINER_MGR run -d --name gitlab-runner-conjur --restart always \
 # Registering GitLab runner
 $SUDO $CONTAINER_MGR run --rm -it -v gitlab-runner-conjur-config:/etc/gitlab-runner \
     "$CONTAINER_IMG" register -u "http://$GITLAB_HOST:$GITLAB_PORT" -r "$GITLAB_REGISTRATION_TOKEN" \
-    --description "Demo Runner" -n --tag-list "conjur-demo" --executor shell
+    --description "Demo Runner" -n --tag-list "conjur-demo" --executor docker --docker-image alpine:latest
 # Deploying Summon on the runner
 $SUDO $CONTAINER_MGR exec -it gitlab-runner-conjur bash -c 'curl -sSL https://raw.githubusercontent.com/cyberark/summon/main/install.sh | bash'
 $SUDO $CONTAINER_MGR exec -it gitlab-runner-conjur bash -c 'curl -sSL https://raw.githubusercontent.com/cyberark/summon-conjur/main/install.sh | bash'

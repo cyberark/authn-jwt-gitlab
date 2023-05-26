@@ -24,7 +24,7 @@ RUN apt-get update && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
-FROM alpine:3.17 as alpine
+FROM alpine:3.18 as alpine
 
 COPY --from=builder-alpine /go/bin/authn-jwt-gitlab /authn-jwt-gitlab
 
@@ -33,7 +33,7 @@ RUN apk add --no-cache ca-certificates && \
 
 CMD ["/authn-jwt-gitlab"]
 
-FROM redhat/ubi8:8.7 as ubi
+FROM redhat/ubi8:8.8 as ubi
 
 COPY --from=builder /go/bin/authn-jwt-gitlab /authn-jwt-gitlab
 

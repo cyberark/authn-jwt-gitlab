@@ -96,6 +96,7 @@ echo " Check the Local Tag value :- ${LOCAL_TAG}"
     fi
   done
 
+#  ========== To Do =============
 # if [[ "${PUBLISH_EDGE}" = true ]]; then
 #   echo "Pushing edge versions..."
 
@@ -115,6 +116,7 @@ echo " Check the Local Tag value :- ${LOCAL_TAG}"
 #   fi
 # fi
 
+#  ========== To Do =============
 # if [[ "${PROMOTE}" = true ]]; then
 #   echo "Promoting image to ${VERSION}"
 
@@ -122,15 +124,16 @@ echo " Check the Local Tag value :- ${LOCAL_TAG}"
 #   readarray -t prefix_versions < <(gen_versions "${VERSION}")
 
 #   for version in latest "${prefix_versions[@]}"; do
-#     tag_and_push "${version}" "${LOCAL_IMAGE}" "registry.tld/${IMAGE_NAME}"
-#     tag_and_push "${version}" "${RH_LOCAL_IMAGE}" "registry.tld/authn-jwt-gitlab-ubi"
+#     tag_and_push "${VERSION}" "${LOCAL_IMAGE}" "registry.tld/${IMAGE_NAME}"
+#     tag_and_push "${VERSION}" "${RH_LOCAL_IMAGE}" "registry.tld/authn-jwt-gitlab-ubi"
 
 #     if [[ "${DOCKERHUB}" ]]; then
-#       tag_and_push "${version}" "${LOCAL_IMAGE}" "${IMAGE_NAME}"
+#       tag_and_push "${VERSION}" "${LOCAL_IMAGE}" "${IMAGE_NAME}"
 #     fi
 #   done
 # fi
 
+#  ========== To Do =============
 # if [[ "${REDHAT}" = true ]]; then
 #   echo "Publishing ${VERSION} to RedHat registry..."
 #   # Publish only the tag version to the Redhat container registry

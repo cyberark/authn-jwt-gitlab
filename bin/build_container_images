@@ -6,7 +6,6 @@ set -eo pipefail
 # from anywhere.
 cd "$(dirname "$0")"
 
-
 . ./build_utils
 
 function main() {
@@ -16,8 +15,8 @@ function main() {
     Stringval="ubuntu alpine ubi"
 
     for target in $Stringval; do
-        CONTAINER_IMAGE_AND_TAG="authn-jwt-gitlab:${target}$(project_version_with_commit)"  # authn-jwt-gitlab:1
-        echo "Building ${CONTAINER_IMAGE_AND_TAG} container image"  # authn-jwt-gitlab:alpine-1.0.0
+        CONTAINER_IMAGE_AND_TAG="authn-jwt-gitlab:${target}$(project_version_with_commit)"
+        echo "Building ${CONTAINER_IMAGE_AND_TAG} container image" 
         docker build \
             --tag "${CONTAINER_IMAGE_AND_TAG}" \
             --target "${target}" \
