@@ -121,6 +121,7 @@ ubuntu:
     * `CONJUR_AUTHN_JWT_SERVICE_ID`
     * `CONJUR_AUTHN_JWT_TOKEN`
     * `CONJUR_SECRET_ID`
+    * `CONJUR_SSL_CERTIFICATE` or `CONJUR_CERT_FILE`
 5. To use the binary in a job executing on the GitLab Runner , review the [example GitLab CI Pipeline script](.gitlab-ci.yml) in this repository.
 
 ### Example GitLab CI YAML File
