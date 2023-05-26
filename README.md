@@ -142,7 +142,6 @@ ubuntu:
   script:
     - export TEST_USERNAME=$(CONJUR_SECRET_ID="Dev-Team-credential1" /authn-jwt-gitlab)
     - export TEST_PASSWORD=$(CONJUR_SECRET_ID="Dev-Team-credential2" /authn-jwt-gitlab)
-    - env | grep TEST_
 
 alpine:
   id_tokens:
@@ -154,7 +153,6 @@ alpine:
   script:
     - export TEST_USERNAME=$(CONJUR_SECRET_ID="Dev-Team-credential1" /authn-jwt-gitlab)
     - export TEST_PASSWORD=$(CONJUR_SECRET_ID="Dev-Team-credential2" /authn-jwt-gitlab)
-    - env | grep TEST_
 
 ubi-fips:
   id_tokens:
@@ -166,7 +164,6 @@ ubi-fips:
   script:
     - export TEST_USERNAME=$(CONJUR_SECRET_ID="Dev-Team-credential1" /authn-jwt-gitlab)
     - export TEST_PASSWORD=$(CONJUR_SECRET_ID="Dev-Team-credential2" /authn-jwt-gitlab)
-    - env | grep TEST_
 ```
 
 ## Support
