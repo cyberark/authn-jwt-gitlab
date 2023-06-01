@@ -91,7 +91,7 @@ echo " Check the Local Tag value :- ${LOCAL_TAG}"
     if [[ "${PUBLISH_INTERNAL}" = true ]]; then
       echo "Pushing ${LOCAL_IMAGE} tagged images to registry.tld..."
       # Always push SHA versioned images internally
-      tag_and_push "${LOCAL_IMAGE}" "registry.tld/authn-jwt-gitlab"   # authn-jwt-gitlab:1.0.0-e917482
+      tag_and_push "${LOCAL_IMAGE}" "registry.tld/authn-jwt-gitlab:${target}$(project_version_with_commit)"   # authn-jwt-gitlab:1.0.0-e917482
 
     fi
   done
