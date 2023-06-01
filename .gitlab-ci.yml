@@ -9,7 +9,7 @@ ubuntu:
       aud: https://gitlab.com
   variables:
     CONJUR_AUTHN_JWT_TOKEN: $ID_TOKEN_1
-  image: authn-jwt-gitlab:ubuntu-1.0.0
+  image: cyberark/authn-jwt-gitlab:ubuntu-1.0.0
   script:
     - export TEST_USERNAME=$(CONJUR_SECRET_ID="Dev-Team-credential1" /authn-jwt-gitlab)
     - export TEST_PASSWORD=$(CONJUR_SECRET_ID="Dev-Team-credential2" /authn-jwt-gitlab)
@@ -20,7 +20,7 @@ alpine:
       aud: https://gitlab.com
   variables:
     CONJUR_AUTHN_JWT_TOKEN: $ID_TOKEN_2
-  image: authn-jwt-gitlab:alpine-1.0.0
+  image: cyberark/authn-jwt-gitlab:alpine-1.0.0
   script:
     - export TEST_USERNAME=$(CONJUR_SECRET_ID="Dev-Team-credential1" /authn-jwt-gitlab)
     - export TEST_PASSWORD=$(CONJUR_SECRET_ID="Dev-Team-credential2" /authn-jwt-gitlab)
@@ -31,7 +31,7 @@ ubi-fips:
       aud: https://gitlab.com
   variables:
     CONJUR_AUTHN_JWT_TOKEN: $ID_TOKEN_3
-  image: authn-jwt-gitlab:ubi-1.0.0
+  image: cyberark/authn-jwt-gitlab:ubi-1.0.0
   script:
     - export TEST_USERNAME=$(CONJUR_SECRET_ID="Dev-Team-credential1" /authn-jwt-gitlab)
     - export TEST_PASSWORD=$(CONJUR_SECRET_ID="Dev-Team-credential2" /authn-jwt-gitlab)
