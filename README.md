@@ -103,10 +103,10 @@ $SUDO $CONTAINER_MGR exec -it gitlab-runner-conjur bash -c 'curl -sSL https://ra
 ## Usage
 
 1. Choose your GitLab Runner Docker container image based on your desired OS.  The following images are available:
-   * authn-jwt-gitlab:ubuntu-1.0.0
-   * authn-jwt-gitlab:alpine-1.0.0
-   * authn-jwt-gitlab:ubi-1.0.0
-2. Once a GitLab Runner Docker container is decided upon, include it in your GitLab CI Pipeline file.  The following example is for the authn-jwt-gitlab:ubuntu-1.0.0 image:
+   * cyberark/authn-jwt-gitlab:ubuntu-1.0.0
+   * cyberark/authn-jwt-gitlab:alpine-1.0.0
+   * cyberark/authn-jwt-gitlab:ubi-1.0.0
+2. Once a GitLab Runner Docker container is decided upon, include it in your GitLab CI Pipeline file.  The following example is for the cyberark/authn-jwt-gitlab:ubuntu-1.0.0 image:
 ```yaml
 ubuntu:
   id_tokens:
@@ -114,7 +114,7 @@ ubuntu:
       aud: https://gitlab.com
   variables:
     CONJUR_AUTHN_JWT_TOKEN: $ID_TOKEN_1
-  image: authn-jwt-gitlab:ubuntu-1.0.0
+  image: cyberark/authn-jwt-gitlab:ubuntu-1.0.0
 ```
 3. Be sure to properly tag the job in the GitLab CI Pipeline file with the proper tag to run the job on the GitLab Runner .
 4. Variables must be set in the GitLab CI Pipeline file for the GitLab Runner Docker container to consume.  Those environment variables are:
@@ -140,7 +140,7 @@ ubuntu:
       aud: https://gitlab.com
   variables:
     CONJUR_AUTHN_JWT_TOKEN: $ID_TOKEN_1
-  image: authn-jwt-gitlab:ubuntu-1.0.0
+  image: cyberark/authn-jwt-gitlab:ubuntu-1.0.0
   script:
     - export TEST_USERNAME=$(CONJUR_SECRET_ID="Dev-Team-credential1" /authn-jwt-gitlab)
     - export TEST_PASSWORD=$(CONJUR_SECRET_ID="Dev-Team-credential2" /authn-jwt-gitlab)
@@ -151,7 +151,7 @@ alpine:
       aud: https://gitlab.com
   variables:
     CONJUR_AUTHN_JWT_TOKEN: $ID_TOKEN_2
-  image: authn-jwt-gitlab:alpine-1.0.0
+  image: cyberark/authn-jwt-gitlab:alpine-1.0.0
   script:
     - export TEST_USERNAME=$(CONJUR_SECRET_ID="Dev-Team-credential1" /authn-jwt-gitlab)
     - export TEST_PASSWORD=$(CONJUR_SECRET_ID="Dev-Team-credential2" /authn-jwt-gitlab)
@@ -162,7 +162,7 @@ ubi-fips:
       aud: https://gitlab.com
   variables:
     CONJUR_AUTHN_JWT_TOKEN: $ID_TOKEN_3
-  image: authn-jwt-gitlab:ubi-1.0.0
+  image: cyberark/authn-jwt-gitlab:ubi-1.0.0
   script:
     - export TEST_USERNAME=$(CONJUR_SECRET_ID="Dev-Team-credential1" /authn-jwt-gitlab)
     - export TEST_PASSWORD=$(CONJUR_SECRET_ID="Dev-Team-credential2" /authn-jwt-gitlab)
