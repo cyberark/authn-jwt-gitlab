@@ -1,3 +1,4 @@
 # System directories files
 .DS_Store
 .vscode/
+.authn-jwt-gitlab
