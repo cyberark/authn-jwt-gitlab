@@ -1,7 +1,7 @@
 # Conjur Gitlab Plugin
 
 ## Description
-This project creates a Docker image that includes a Go binary that can be used to authenticate a JWT token against Conjur Secrets Manager and retrieve a secret value.  Ubuntu, Alpine, and UBI-FIPS versions are available.  
+This project creates a Docker image that includes a Go binary that can be used to authenticate a JWT against Conjur Secrets Manager and retrieve a secret value.  Ubuntu, Alpine, and UBI-FIPS versions are available.  
 ## Certification level
 [![](https://img.shields.io/badge/Certification%20Level-Certified-28A745?)](https://github.com/cyberark/community/blob/master/Conjur/conventions/certification-levels.md)
 
@@ -87,17 +87,157 @@ $SUDO $CONTAINER_MGR exec -it gitlab-runner-conjur bash -c 'curl -sSL https://ra
 
 ### Conjur policies setup
 
-```yaml
-# Sample Conjur policies
-  * authn-jwt-gitlab/policy-gitlab-jwt/policy1.yml
-  * authn-jwt-gitlab/policy-gitlab-jwt/policy2.yml
-  * authn-jwt-gitlab/policy-gitlab-jwt/policy3.yml
+* Create a Conjur policy for the JWT Authenticator
+  
+  - Save the following policy as authn-jwt.yml:
+  ```yaml
+  - !policy
+    id: conjur/authn-jwt/gitlab
+    annotations:
+      description: JWT Authenticator web service for gitlab
+      gitlab: true
+    body:
+      # Create the conjur/authn-jwt/gitlab web service
+      - !webservice
 
-# Sample Conjur variables' values
-  * conjur variable values add conjur/authn-jwt/gitlab/token-app-property 'namespace_path'
-  * conjur variable values add conjur/authn-jwt/gitlab/identity-path 'gitlab-apps'
-  * conjur variable values add conjur/authn-jwt/gitlab/issuer 'https://gitlab.com'
-  * conjur variable values add conjur/authn-jwt/gitlab/jwks-uri 'https://gitlab.com/-/jwks/’
+      # Optional: Uncomment any or all of the following variables:
+      # * token-app-propery
+      # * identity-path  conjur/authn-jwt/gitlab/identity-path  gitlab/root
+      # * issuer
+      # identity-path is always used together with token-app-property
+      # however, token-app-property can be used without identity-path
+
+      - !variable
+        id: token-app-property
+        annotations:
+          description: JWT Authenticator bases authentication on claims from the JWT. You can base authentication on identifying clams such as the name, the user, and so on. If you can customize the JWT, you can create a custom claim and base authentication on this claim.
+
+      - !variable
+        id: identity-path
+        annotations:
+          description: JWT Authenticator bases authentication on a combination of the claim in the token-app-property and the full path of the application identity (host) in Conjur. This variable is optional, and is used in conjunction with token-app-property. It has no purpose when standing alone.
+
+      - !variable
+        id: issuer
+        annotations:
+          description: JWT Authenticator bases authentication on the JWT issuer. This variable is optional, and is relevant only if there is an iss claim in the JWT. The issuer variable and iss claim values must match.
+
+      - !variable
+        id: jwks-uri
+
+        ## Group of hosts that can authenticate using this JWT Authenticator
+      - !group
+        id: apps
+
+      # Permit the consumers group to authenticate to the authn-jwt/gitlab web service
+      - !permit
+        role: !group apps
+        privilege: [ read, authenticate ]
+        resource: !webservice
+
+      # Create a web service for checking authn-jwt/gitlab status
+      - !webservice
+        id: status
+
+      # Group of users who can check the status of authn-jwt/gitlab
+      - !group
+        id: operators
+
+      # Permit group to check the status of authn-jwt/gitlab
+      - !permit
+        role: !group operators
+        privilege: read
+        resource: !webservice status
+  ```
+    
+    - Load the policy into root:
+  ```
+    conjur policy load -f /path/to/file/authn-jwt.yml -b root
+  ```   
+  
+* Populate the policy variables
+
+```yaml
+  * conjur variable set -i conjur/authn-jwt/gitlab/token-app-property -v 'namespace_path'
+  * conjur variable set -i conjur/authn-jwt/gitlab/identity-path -v 'gitlab-apps'
+  * conjur variable set -i conjur/authn-jwt/gitlab/issuer -v 'https://gitlab.com'
+  * conjur variable set -i conjur/authn-jwt/gitlab/jwks-uri -v 'https://gitlab.com/-/jwks/’
+```
+
+* Define an app ID (host)
+```yaml
+- !policy
+  id: gitlab-apps
+  body:
+
+      # Group of hosts that can authenticate using this JWT Authenticator
+    - !group
+
+        # `gitlab_name` is the primary identifying claim
+    - &hosts
+      - !host
+        id: myapp
+        annotations:
+          description: Host identity for authn-jwt-gitlab project in root namespace within GitLab
+          authn-jwt/gitlab/ref: main
+          authn-jwt/gitlab/project_path: myapp/authn-jwt-gitlab
+
+    # Grant all hosts in collection above to be members of projects group
+    - !grant
+      role: !group
+      members: *hosts
+
+- !grant
+  role: !group conjur/authn-jwt/gitlab/apps
+  member: !group gitlab-apps
+```
+
+    - Load the policy into root:
+  ```
+    conjur policy load -f /path/to/file/authn-jwt-hosts.yml -b root
+  ```  
+
+* Secret Variables and Permissions:
+
+```yaml
+- &devvariables
+   - !variable Dev-Team-credential1
+   - !variable Dev-Team-credential2
+   - !variable Dev-Team-credential3
+   - !variable Dev-Team-credential4
+
+- !permit
+  resource: *devvariables
+  privileges: [ read, execute ]
+  roles: !group gitlab-apps
+```
+  - Load the policy into root:
+  ```
+    conjur policy load -f /path/to/file/authn-jwt-secret-variables.yml -b root
+  ``` 
+
+* Set the secret variable   
+     a. Generate a secret
+
+     Generate a value for your application’s secret:
+     ```
+     secretVal=$(openssl rand -hex 12 | tr -d '\r\n')
+     ```
+
+     This generates a 12-hex-character value.
+
+     b. Store the secret
+
+     Store the generated value in Conjur:
+     ```
+     conjur variable set -i Dev-Team-credential1 -v ${secretVal}
+     ```
+
+* Allowlist the JWT Authenticator
+<small><a href='https://docs.cyberark.com/Product-Doc/OnlineHelp/AAM-DAP/Latest/en/Content/Operations/Services/authentication-types.htm#Configur'>For details, see Configure authenticators. </a></small>
+  - Environment variable
+```
+CONJUR_AUTHENTICATORS=authn-jwt/gitlab
 ```
 
 ## Usage
