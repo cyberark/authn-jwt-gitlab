@@ -37,15 +37,15 @@ pipeline {
       }
     }
 
-    stage('Build while unit testit testing') {
-      parallel {
-        stage('Golang 1.19') {
-          steps {
-            // sh './bin/test.sh'
-          }
-        }
-      }
-    }
+    // stage('Build while unit testit testing') {
+    //   parallel {
+    //     stage('Golang 1.19') {
+    //       steps {
+    //         // sh './bin/test.sh'
+    //       }
+    //     }
+    //   }
+    // }
 
   stage('Build release artifacts') {
     steps {
