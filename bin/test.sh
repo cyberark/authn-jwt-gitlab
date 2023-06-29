@@ -31,7 +31,6 @@ docker-compose run \
   -e GO_VERSION \
   "conjur_test" bash -c 'set -o pipefail;
            output_dir="./output/$GO_VERSION"
-           echo "from TCS $(output_dir)"
            go test -coverprofile="$output_dir/c.out" -v ./... | tee "$output_dir/junit.output";
            exit_code=$?;
            echo "Tests finished - aggregating results...";
