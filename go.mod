@@ -10,8 +10,18 @@ require (
 )
 
 require (
+	github.com/alessio/shellescape v1.4.1 // indirect
+	github.com/cyberark/conjur-api-go v0.11.0 // indirect
+	github.com/danieljoos/wincred v1.1.2 // indirect
 	github.com/davecgh/go-spew v1.1.1 // indirect
+	github.com/godbus/dbus/v5 v5.1.0 // indirect
+	github.com/golang/mock v1.6.0 // indirect
 	github.com/pmezard/go-difflib v1.0.0 // indirect
-	golang.org/x/sys v0.0.0-20220715151400-c0bba94af5f8 // indirect
+	github.com/stretchr/objx v0.5.0 // indirect
+	github.com/zalando/go-keyring v0.2.2 // indirect
+	golang.org/x/mod v0.4.2 // indirect
+	golang.org/x/sys v0.3.0 // indirect
+	golang.org/x/tools v0.1.1 // indirect
+	golang.org/x/xerrors v0.0.0-20200804184101-5ec99f83aff1 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 )

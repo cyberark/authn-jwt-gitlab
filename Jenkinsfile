@@ -19,13 +19,17 @@ pipeline {
     buildDiscarder(logRotator(numToKeepStr: '30'))
   }
 
+  triggers {
+    cron(getDailyCronString())
+  }
+
   stages {
     // Generates a VERSION file based on the current build number and latest version in CHANGELOG.md
-    // stage('Validate Changelog and set version') {
-    //   steps {
-    //     updateVersion("CHANGELOG.md", "${BUILD_NUMBER}")
-    //   }
-    // }
+    stage('Validate Changelog and set version') {
+      steps {
+        updateVersion("CHANGELOG.md", "${BUILD_NUMBER}")
+      }
+    }
 
     stage('Get latest upstream dependencies') {
       steps {
@@ -33,15 +37,15 @@ pipeline {
       }
     }
 
-    stage('Build while unit testit testing') {
-      parallel {
-        stage('Golang 1.19') {
-          steps {
-            sh './bin/test.sh'
-          }
-        }
-      }
-    }
+    // stage('Build while unit testit testing') {
+    //   parallel {
+    //     stage('Golang 1.19') {
+    //       steps {
+    //         // sh './bin/test.sh'
+    //       }
+    //     }
+    //   }
+    // }
 
   stage('Build release artifacts') {
     steps {
@@ -106,21 +110,21 @@ pipeline {
 def containerImageWithTag_ubuntu() {
   sh(
     returnStdout: true,
-    script: 'source ./bin/build_utils && echo "authn-jwt-gitlab:$(project_version_with_commit_alpine)"'
+    script: 'source ./bin/build_utils && echo "authn-jwt-gitlab:$(project_version_with_commit_ubuntu)"'
   )
 }
 
 def containerImageWithTag_ubi() {
   sh(
     returnStdout: true,
-    script: 'source ./bin/build_utils && echo "authn-jwt-gitlab:$(project_version_with_commit_ubuntu)"'
+    script: 'source ./bin/build_utils && echo "authn-jwt-gitlab:$(project_version_with_commit_ubi)"'
   )
 }
 
 def containerImageWithTag_apline() {
   sh(
     returnStdout: true,
-    script: 'source ./bin/build_utils && echo "authn-jwt-gitlab:$(project_version_with_commit_ubi)"'
+    script: 'source ./bin/build_utils && echo "authn-jwt-gitlab:$(project_version_with_commit_apline)"'
   )
 }
 
