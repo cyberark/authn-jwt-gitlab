@@ -8,6 +8,9 @@ import (
 	"github.com/cyberark/conjur-api-go/conjurapi"
 )
 
+var loadConfig = conjurapi.LoadConfig
+var clientFromEnvironment = conjurapi.NewClientFromEnvironment
+
 // Environment variables to define:
 // CONJUR_APPLIANCE_URL, CONJUR_ACCOUNT, CONJUR_AUTHN_JWT_SERVICE_ID,
 // CONJUR_AUTHN_JWT_TOKEN, CONJUR_SECRET_ID
@@ -45,13 +48,13 @@ func main() {
 
 	// Loading configuration via defined Env vars:
 	// CONJUR_APPLIANCE & CONJUR_ACCOUNT
-	config, err := conjurapi.LoadConfig()
+	config, err := loadConfig()
 	if err != nil {
 		log.Fatalf("Cannot load configuration. %s", err)
 	}
 
 	// Create a new Conjur client using environment variables
-	conjur, err := conjurapi.NewClientFromEnvironment(config)
+	conjur, err := clientFromEnvironment(config)
 	if err != nil {
 		log.Fatalf("Cannot create new client from environment variables. %s", err)
 	}
