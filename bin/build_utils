@@ -41,15 +41,13 @@ function git_commit() {
 
 function project_version() {
   # VERSION derived from CHANGELOG and automated release library
-  echo "$(<"$(repo_root)/bin/VERSION")"
+  echo "$(<"$(repo_root)/VERSION")"
 }
 
 function project_semantic_version() {
   local version
   version="$(project_version)"
-
-  # Remove Jenkins build number from VERSION
-  echo "${version/-*/}"
+  echo "${version}"
 }
 
 function project_semantic_version_with_commit() {
@@ -57,19 +55,19 @@ function project_semantic_version_with_commit() {
 }
 
 function project_version_with_commit() {
-  echo "-$(project_version)"  # -1.0.0
+  echo "$(project_version)-$(git_commit)"  # -1.0.0-123-38e61ad
 }
 
 function project_version_with_commit_alpine() {
-  echo "alpine-$(project_version)"
+  echo "alpine-$(project_version_with_commit)"
 }
 
 function project_version_with_commit_ubuntu() {
-  echo "ubuntu-$(project_version)"
+  echo "ubuntu-$(project_version_with_commit)"
 }
 
 function project_version_with_commit_ubi() {
-  echo "ubi-$(project_version)"
+  echo "ubi-$(project_version_with_commit)"
 }
 
 # generate less specific versions, eg. given 1.2.3 will print 1.2 and 1
