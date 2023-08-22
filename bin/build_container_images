@@ -15,7 +15,7 @@ function main() {
     Stringval="ubuntu alpine ubi"
 
     for target in $Stringval; do
-        CONTAINER_IMAGE_AND_TAG="authn-jwt-gitlab:${target}$(project_version_with_commit)"
+        CONTAINER_IMAGE_AND_TAG="authn-jwt-gitlab:${target}-$(project_version_with_commit)"
         echo "Building ${CONTAINER_IMAGE_AND_TAG} container image" 
         docker build \
             --tag "${CONTAINER_IMAGE_AND_TAG}" \

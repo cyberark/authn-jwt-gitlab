@@ -2,3 +2,5 @@
 .DS_Store
 .vscode/
 .authn-jwt-gitlab
+VERSION
+bin/authn-jwt-gitlab
