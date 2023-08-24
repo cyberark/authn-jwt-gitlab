@@ -33,7 +33,9 @@ RUN apk add --no-cache ca-certificates && \
 
 CMD ["/authn-jwt-gitlab"]
 
-FROM redhat/ubi8:8.8 as ubi
+FROM redhat/ubi8 as ubi
+
+RUN yum upgrade -y dnf-plugin-subscription-manager platform-python python3-cloud-what python3-subscription-manager-rhsm python3-syspurpose subscription-manager-rhsm-certificates subscription-manager
 
 COPY --from=builder /go/bin/authn-jwt-gitlab /authn-jwt-gitlab
 
