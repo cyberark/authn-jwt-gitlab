@@ -14,7 +14,7 @@ COPY . .
 RUN go get -d -v ./...
 RUN go install -v ./...
 
-FROM ubuntu:kinetic as ubuntu
+FROM ubuntu:lunar as ubuntu
 
 COPY --from=builder /go/bin/authn-jwt-gitlab /authn-jwt-gitlab
 
@@ -33,7 +33,7 @@ RUN apk add --no-cache ca-certificates && \
 
 CMD ["/authn-jwt-gitlab"]
 
-FROM redhat/ubi8:8.8 as ubi
+FROM redhat/ubi9:9.2 as ubi
 
 COPY --from=builder /go/bin/authn-jwt-gitlab /authn-jwt-gitlab
 
