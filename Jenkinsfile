@@ -18,6 +18,10 @@ pipeline {
     timestamps()
     buildDiscarder(logRotator(numToKeepStr: '30'))
   }
+  
+  triggers {
+    cron(getDailyCronString())
+  }
 
   stages {
     // Generates a VERSION file based on the current build number and latest version in CHANGELOG.md
