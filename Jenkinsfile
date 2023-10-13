@@ -12,7 +12,7 @@ if (params.MODE == "PROMOTE") {
 }
 
 pipeline {
-  agent { label 'executor-v2' }
+  agent { label 'conjur-enterprise-common-agent' }
 
   options {
     timestamps()
@@ -29,7 +29,16 @@ pipeline {
 
     stage('Get latest upstream dependencies') {
       steps {
-        updateGoDependencies("${WORKSPACE}/go.mod")
+        sh './bin/updateGoDependencies.sh -g "${WORKSPACE}/go.mod"'
+      }
+    }
+
+    stage('Get InfraPool ExecutorV2 Agent') {
+      steps {
+        script {
+          // Request ExecutorV2 agents for 1 hour(s)
+          INFRAPOOL_EXECUTORV2_AGENT_0 = getInfraPoolAgent.connected(type: "ExecutorV2", quantity: 1, duration: 1)[0]
+        }
       }
     }
 
@@ -37,7 +46,9 @@ pipeline {
       parallel {
         stage('Golang 1.19') {
           steps {
-            sh './bin/test.sh'
+            script {
+              INFRAPOOL_EXECUTORV2_AGENT_0.agentSh './bin/test.sh'
+            }
           }
         }
       }
@@ -45,49 +56,53 @@ pipeline {
 
   stage('Build release artifacts') {
     steps {
-        sh "./bin/build_container_images"
+      script {
+        INFRAPOOL_EXECUTORV2_AGENT_0.agentSh "./bin/build_container_images"
       }
     }
+  }
 
     stage('Push images to internal registry') {
       steps {
-        // Push images to the internal registry so that they can be used
-        // by tests, even if the tests run on a different executor.
-        sh './bin/publish-images internal'
+        script {
+          // Push images to the internal registry so that they can be used
+          // by tests, even if the tests run on a different executor.
+          INFRAPOOL_EXECUTORV2_AGENT_0.agentSh './bin/publish-images internal'
+        }
       }
     }
     stage('Scan Docker Image') {
         parallel {
             stage("Scan Ubuntu Docker Image for fixable issues") {
                 steps {
-                    scanAndReport(containerImageWithTag_ubuntu(), "HIGH", false)
+                    scanAndReport(INFRAPOOL_EXECUTORV2_AGENT_0, containerImageWithTag_ubuntu(), "HIGH", false)
                       }
             }
             stage("Scan Ubuntu Docker image for total issues") {
                 steps {
-                    scanAndReport(containerImageWithTag_ubuntu(), "NONE", true)
+                    scanAndReport(INFRAPOOL_EXECUTORV2_AGENT_0, containerImageWithTag_ubuntu(), "NONE", true)
                       }
             }
 
             stage("Scan UBI Docker Image for fixable issues") {
                 steps {
-                      scanAndReport(containerImageWithTag_ubi(), "HIGH", false)
+                      scanAndReport(INFRAPOOL_EXECUTORV2_AGENT_0, containerImageWithTag_ubi(), "HIGH", false)
                       }
             }
             stage("Scan UBI Docker image for total issues") {
                 steps {
-                    scanAndReport(containerImageWithTag_ubi(), "NONE", true)
+                    scanAndReport(INFRAPOOL_EXECUTORV2_AGENT_0, containerImageWithTag_ubi(), "NONE", true)
                       }
             }
 
             stage("Scan Alpine Docker Image for fixable issues") {
                 steps {
-                    scanAndReport(containerImageWithTag_apline(), "HIGH", false)
+                    scanAndReport(INFRAPOOL_EXECUTORV2_AGENT_0, containerImageWithTag_apline(), "HIGH", false)
                       }
             }
             stage("Scan Alpine Docker image for total issues") {
                 steps {
-                      scanAndReport(containerImageWithTag_apline(), "NONE", true)
+                      scanAndReport(INFRAPOOL_EXECUTORV2_AGENT_0, containerImageWithTag_apline(), "NONE", true)
                       }
             }
         }
@@ -97,28 +112,30 @@ pipeline {
 
   post {
     always {
-      cleanupAndNotify(currentBuild.currentResult)
+      script {
+        releaseInfraPoolAgent(".infrapool/release_agents")
+      }
     }
   }
 }
 
 
 def containerImageWithTag_ubuntu() {
-  sh(
+  INFRAPOOL_EXECUTORV2_AGENT_0.agentSh(
     returnStdout: true,
     script: 'source ./bin/build_utils && echo "authn-jwt-gitlab:$(project_version_with_commit_alpine)"'
   )
 }
 
 def containerImageWithTag_ubi() {
-  sh(
+  INFRAPOOL_EXECUTORV2_AGENT_0.agentSh(
     returnStdout: true,
     script: 'source ./bin/build_utils && echo "authn-jwt-gitlab:$(project_version_with_commit_ubuntu)"'
   )
 }
 
 def containerImageWithTag_apline() {
-  sh(
+  INFRAPOOL_EXECUTORV2_AGENT_0.agentSh(
     returnStdout: true,
     script: 'source ./bin/build_utils && echo "authn-jwt-gitlab:$(project_version_with_commit_ubi)"'
   )
@@ -127,7 +144,7 @@ def containerImageWithTag_apline() {
 def containerImageWithTag() {
   var1 = $1
   sh 'echo Cyberark testing ${var1}'
-  sh(
+  INFRAPOOL_EXECUTORV2_AGENT_0.agentSh(
     returnStdout: true,
     script: 'source ./bin/build_utils && echo "authn-jwt-gitlab:${var1}$(project_version_with_commit)"'
   )
