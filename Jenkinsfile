@@ -127,21 +127,21 @@ pipeline {
 def containerImageWithTag_ubuntu() {
   INFRAPOOL_EXECUTORV2_AGENT_0.agentSh(
     returnStdout: true,
-    script: 'source ./bin/build_utils && echo "authn-jwt-gitlab:$(project_version_with_commit_alpine)"'
+    script: 'source ./bin/build_utils && echo "authn-jwt-gitlab:$(project_version_with_commit_ubuntu)"'
   )
 }
 
 def containerImageWithTag_ubi() {
   INFRAPOOL_EXECUTORV2_AGENT_0.agentSh(
     returnStdout: true,
-    script: 'source ./bin/build_utils && echo "authn-jwt-gitlab:$(project_version_with_commit_ubuntu)"'
+    script: 'source ./bin/build_utils && echo "authn-jwt-gitlab:$(project_version_with_commit_ubi)"'
   )
 }
 
 def containerImageWithTag_apline() {
   INFRAPOOL_EXECUTORV2_AGENT_0.agentSh(
     returnStdout: true,
-    script: 'source ./bin/build_utils && echo "authn-jwt-gitlab:$(project_version_with_commit_ubi)"'
+    script: 'source ./bin/build_utils && echo "authn-jwt-gitlab:$(project_version_with_commit_apline)"'
   )
 }
 
