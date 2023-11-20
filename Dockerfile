@@ -28,12 +28,14 @@ FROM alpine:3.18 as alpine
 
 COPY --from=builder-alpine /go/bin/authn-jwt-gitlab /authn-jwt-gitlab
 
+RUN apk update && apk upgrade --no-cache libcrypto3 libssl3
+
 RUN apk add --no-cache ca-certificates && \
     update-ca-certificates
 
 CMD ["/authn-jwt-gitlab"]
 
-FROM redhat/ubi9:9.2 as ubi
+FROM redhat/ubi9:9.3 as ubi
 
 COPY --from=builder /go/bin/authn-jwt-gitlab /authn-jwt-gitlab
 
