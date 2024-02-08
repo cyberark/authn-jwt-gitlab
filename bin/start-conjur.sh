@@ -9,16 +9,16 @@ main() {
 
   retrieve_cyberark_ca_cert
   announce "Pulling images..."
-  docker-compose pull "conjur" "postgres" "cli5" "conjur-server"
+  docker compose pull "conjur" "postgres" "cli5" "conjur-server"
   echo "Done!"
 
   announce "Building images..."
-  docker-compose build "conjur" "postgres" "conjur-server"
+  docker compose build "conjur" "postgres" "conjur-server"
   echo "Done!"
 
   announce "Starting Conjur environment..."
-  export CONJUR_DATA_KEY="$(docker-compose run -T --no-deps conjur data-key generate)"
-  docker-compose up --no-deps -d "conjur" "postgres" "conjur-server"
+  export CONJUR_DATA_KEY="$(docker compose run -T --no-deps conjur data-key generate)"
+  docker compose up --no-deps -d "conjur" "postgres" "conjur-server"
   echo "Done!"
 
   announce "Waiting for conjur to start..."
