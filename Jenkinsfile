@@ -48,7 +48,7 @@ pipeline {
 
     stage('Build while unit testit testing') {
       parallel {
-        stage('Golang 1.19') {
+        stage('Golang 1.22.7') {
           steps {
             script {
               INFRAPOOL_EXECUTORV2_AGENT_0.agentSh './bin/test.sh'

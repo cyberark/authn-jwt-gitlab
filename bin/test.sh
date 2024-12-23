@@ -7,7 +7,7 @@ cd "$(dirname "$0")"
 
 trap teardown EXIT
 
-export GO_VERSION="${1:-"1.18"}"
+export GO_VERSION="${1:-"1.22.7"}"
 
 # Spin up Conjur environment
 source ./start-conjur.sh
@@ -25,7 +25,7 @@ failed() {
   exit 1
 }
 
-# Golang container version to use: `1.18` or `1.19`
+# Golang container version to use: `1.22.7`
 # announce "Running tests for Go version: $GO_VERSION...";
 docker compose run \
   -e GO_VERSION \

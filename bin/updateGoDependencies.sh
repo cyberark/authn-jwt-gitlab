@@ -85,7 +85,7 @@ function main {
 
     # Extract golang version from go.mod
     echo -n "extracting go.mod version..."
-    GO_MOD_VERSION=$(grep -E "^go\ [0-9]+\.[0-9]+" "${go_mod}" | grep -oE "[0-9]+\.[0-9]+")
+    GO_MOD_VERSION=$(grep -E "^go\ [0-9]+\.[0-9]+\.[0-9]+" "${go_mod}" | grep -oE "[0-9]+\.[0-9]+\.[0-9]+")
     echo "done"
 
     echo -n "adding private go.mod replace statements..."
