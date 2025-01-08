@@ -9,7 +9,7 @@ main() {
 
   retrieve_cyberark_ca_cert
   announce "Pulling images..."
-  docker compose pull "conjur" "postgres" "cli5" "conjur-server"
+  docker compose pull "conjur" "postgres" "cli8" "conjur-server"
   echo "Done!"
 
   announce "Building images..."
