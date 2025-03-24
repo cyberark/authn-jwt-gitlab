@@ -7,6 +7,8 @@ import (
 	"path"
 	"runtime"
 	"strings"
+	"encoding/base64"
+	"path/filepath"
 
 	"github.com/sirupsen/logrus"
 	"gopkg.in/yaml.v2"
@@ -15,6 +17,12 @@ import (
 )
 
 var supportedAuthnTypes = []string{"authn", "ldap"}
+
+var cachedTelemetryHeader string
+
+const (
+	ConjurSourceHeader = "x-cybr-telemetry"
+)
 
 type Config struct {
 	Account      string `yaml:"account,omitempty"`
@@ -189,4 +197,47 @@ func contains(s []string, str string) bool {
 	}
 
 	return false
+}
+
+// GetReleaseVersion retrieves the release version from the VERSION file located one directory above the current working directory.
+// It returns the version as a string if successful, or an error if there's a problem reading the VERSION file.
+//
+// Returns:
+//   - string: The release version as a string.
+//   - error: An error if the VERSION file can't be read or any other error occurs during the process.
+func GetReleaseVersion() (string, error) {
+	currentDir, err := filepath.Abs(".")
+	if err != nil {
+		fmt.Errorf("Error getting current directory: %v", err)
+	}
+	versionPath := filepath.Join(currentDir, "..", "VERSION")
+	data, err := os.ReadFile(versionPath)
+	if err != nil {
+		return "", fmt.Errorf("error reading VERSION file: %v", err)
+	}
+	version := strings.TrimSpace(string(data))
+
+	return version, nil
+}
+
+// BuildAndCacheTelemetryHeader generates a telemetry header string based on the release version 
+// retrieved from the GetReleaseVersion function and encodes it in base64 using URL-safe encoding.
+// This header is intended for use in tracking or telemetry purposes and includes information
+// like Gitlab as the source, the release version, and other identifiers.
+//
+// Returns:
+//   - string: The base64-encoded telemetry header string.
+func (c *Config) BuildAndCacheTelemetryHeader() string {
+	if cachedTelemetryHeader != "" {
+		return cachedTelemetryHeader
+	}
+	// Generate the telemetry header if not cached
+	version, err := GetReleaseVersion()
+	if err != nil {
+		fmt.Println("Error getting version:", err)
+		return ""
+	}
+	finalSource := "in=Gitlab&iv=" + version + "&it=cybr-secretsmanager&vn=Gitlab"
+	cachedTelemetryHeader = base64.RawURLEncoding.EncodeToString([]byte(finalSource))
+	return cachedTelemetryHeader
 }
