@@ -1,5 +1,7 @@
 #!/usr/bin/env groovy
 
+@Library("product-pipelines-shared-library") _
+
 // Performs release promotion.  No other stages will be run
 if (params.MODE == "PROMOTE") {
   release.promote(params.VERSION_TO_PROMOTE) { sourceVersion, targetVersion, assetDirectory ->
@@ -52,6 +54,7 @@ pipeline {
           steps {
             script {
               INFRAPOOL_EXECUTORV2_AGENT_0.agentSh './bin/test.sh'
+              INFRAPOOL_EXECUTORV2_AGENT_0.agentStash name: 'output-xml', includes: 'output/1.22.7/*.xml'
             }
           }
         }
@@ -116,9 +119,12 @@ pipeline {
 
   post {
     always {
-      script {
-        releaseInfraPoolAgent(".infrapool/release_agents")
-      }
+      unstash 'output-xml'
+      junit 'output/1.22.7/junit.xml'
+      cobertura autoUpdateHealth: false, autoUpdateStability: false, coberturaReportFile: 'output/1.22.7/coverage.xml', conditionalCoverageTargets: '30, 0, 0', failUnhealthy: false, failUnstable: false, lineCoverageTargets: '30, 0, 0', maxNumberOfBuilds: 0, methodCoverageTargets: '30, 0, 0', onlyStable: false, sourceEncoding: 'ASCII', zoomCoverageChart: false
+      codacy action: 'reportCoverage', filePath: "output/1.22.7/coverage.xml"
+
+      releaseInfraPoolAgent(".infrapool/release_agents")
     }
   }
 }

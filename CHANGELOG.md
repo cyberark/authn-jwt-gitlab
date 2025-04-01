@@ -6,6 +6,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+## [2.0.1] - 2025-04-01
+- Integrated Codacy.
+
 ## [2.0.0] - 2025-01-07
 - Updated Go version to 1.22.7.
 - Updated Docker images to use Go 1.22.7.
