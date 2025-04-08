@@ -1,4 +1,4 @@
-FROM golang:1.22.7 as builder
+FROM golang:1.23.7 AS builder
 
 WORKDIR /go/src/github.com/cyberark/authn-jwt-gitlab
 COPY . .
@@ -6,7 +6,7 @@ COPY . .
 RUN go get -d -v ./...
 RUN go install -v ./...
 
-FROM golang:1.22.7-alpine as builder-alpine
+FROM golang:1.23.7-alpine AS builder-alpine
 
 WORKDIR /go/src/github.com/cyberark/authn-jwt-gitlab
 COPY . .
@@ -14,7 +14,7 @@ COPY . .
 RUN go get -d -v ./...
 RUN go install -v ./...
 
-FROM ubuntu:22.04 as ubuntu
+FROM ubuntu:24.04 AS ubuntu
 
 RUN groupadd -r appuser && useradd -r -g appuser appuser
 
@@ -28,7 +28,7 @@ RUN apt-get update && \
 
 USER appuser
 
-FROM alpine:3.18 as alpine
+FROM alpine:3.21.3 AS alpine
 
 RUN addgroup -S appuser && adduser -S appuser -G appuser
 
@@ -44,7 +44,7 @@ USER appuser
 
 CMD ["/authn-jwt-gitlab"]
 
-FROM redhat/ubi9:9.3 as ubi
+FROM redhat/ubi9:9.5-1742918310 AS ubi
 
 RUN yum -y update && \
     yum clean all && \

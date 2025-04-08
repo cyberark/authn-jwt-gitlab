@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+## [2.0.2] - 2025-04-08
+- Fix JWT HTTP error handling.
+- Upgrade Go version to 1.23.7.
+
 ## [2.0.1] - 2025-04-01
 - Integrated Codacy.
 
