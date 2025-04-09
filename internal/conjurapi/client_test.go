@@ -2,6 +2,8 @@ package conjurapi
 
 import (
 	"testing"
+	"fmt"
+	"net/http"
 
 	"github.com/cyberark/authn-jwt-gitlab/internal/conjurapi/authn"
 	"github.com/stretchr/testify/assert"
@@ -69,4 +71,56 @@ func TestNewClientFromToken(t *testing.T) {
 		assert.NoError(t, err)
 		assert.IsType(t, &authn.TokenAuthenticator{}, client.authenticator)
 	})
+}
+
+func TestHandleHttpStatus(t *testing.T) {
+	tests := []struct {
+		statusCode    int
+		expectedError error
+	}{
+		{
+			statusCode:    http.StatusBadRequest,
+			expectedError: fmt.Errorf("Bad request: received 400 status code"),
+		},
+		{
+			statusCode:    http.StatusUnauthorized,
+			expectedError: fmt.Errorf("Unauthorized: received 401 status code"),
+		},
+		{
+			statusCode:    http.StatusForbidden,
+			expectedError: fmt.Errorf("Forbidden: received 403 status code"),
+		},
+		{
+			statusCode:    http.StatusInternalServerError,
+			expectedError: fmt.Errorf("Internal server error: received 500 status code"),
+		},
+		{
+			statusCode:    499,
+			expectedError: fmt.Errorf("Unexpected error: received 499 status code"),
+		},
+		{
+			statusCode:    200,
+			expectedError: nil,
+		},
+		{
+			statusCode:    300,
+			expectedError: nil,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(fmt.Sprintf("Status code: %d", tt.statusCode), func(t *testing.T) {
+			resp := &http.Response{
+				StatusCode: tt.statusCode,
+			}
+
+			err := HandleHttpStatus(resp)
+			
+			if tt.expectedError == nil {
+				assert.NoError(t, err)
+			} else {
+				assert.EqualError(t, err, tt.expectedError.Error())
+			}
+		})
+	}
 }
