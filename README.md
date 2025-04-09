@@ -161,7 +161,7 @@ $SUDO $CONTAINER_MGR exec -it gitlab-runner-conjur bash -c 'curl -sSL https://ra
   * conjur variable set -i conjur/authn-jwt/gitlab/token-app-property -v 'namespace_path'
   * conjur variable set -i conjur/authn-jwt/gitlab/identity-path -v 'gitlab-apps'
   * conjur variable set -i conjur/authn-jwt/gitlab/issuer -v 'https://gitlab.com'
-  * conjur variable set -i conjur/authn-jwt/gitlab/jwks-uri -v 'https://gitlab.com/-/jwks/’
+  * conjur variable set -i conjur/authn-jwt/gitlab/jwks-uri -v 'https://gitlab.com/oauth/discovery/keys’
 ```
 
 * Define an app ID (host)
@@ -282,8 +282,10 @@ ubuntu:
     CONJUR_AUTHN_JWT_TOKEN: $ID_TOKEN_1
   image: cyberark/authn-jwt-gitlab:ubuntu-1.0.0
   script:
-    - export TEST_USERNAME=$(CONJUR_SECRET_ID="Dev-Team-credential1" /authn-jwt-gitlab)
-    - export TEST_PASSWORD=$(CONJUR_SECRET_ID="Dev-Team-credential2" /authn-jwt-gitlab)
+    - USER_NAME=$(CONJUR_SECRET_ID="Dev-Team-credential1" /authn-jwt-gitlab)
+    - export TEST_USERNAME=$USER_NAME
+    - PASSWORD=$(CONJUR_SECRET_ID="Dev-Team-credential2" /authn-jwt-gitlab)
+    - export TEST_PASSWORD=$PASSWORD
 
 alpine:
   id_tokens:
@@ -293,8 +295,10 @@ alpine:
     CONJUR_AUTHN_JWT_TOKEN: $ID_TOKEN_2
   image: cyberark/authn-jwt-gitlab:alpine-1.0.0
   script:
-    - export TEST_USERNAME=$(CONJUR_SECRET_ID="Dev-Team-credential1" /authn-jwt-gitlab)
-    - export TEST_PASSWORD=$(CONJUR_SECRET_ID="Dev-Team-credential2" /authn-jwt-gitlab)
+    - USER_NAME=$(CONJUR_SECRET_ID="Dev-Team-credential1" /authn-jwt-gitlab)
+    - export TEST_USERNAME=$USER_NAME
+    - PASSWORD=$(CONJUR_SECRET_ID="Dev-Team-credential2" /authn-jwt-gitlab)
+    - export TEST_PASSWORD=$PASSWORD
 
 ubi-fips:
   id_tokens:
@@ -304,8 +308,10 @@ ubi-fips:
     CONJUR_AUTHN_JWT_TOKEN: $ID_TOKEN_3
   image: cyberark/authn-jwt-gitlab:ubi-1.0.0
   script:
-    - export TEST_USERNAME=$(CONJUR_SECRET_ID="Dev-Team-credential1" /authn-jwt-gitlab)
-    - export TEST_PASSWORD=$(CONJUR_SECRET_ID="Dev-Team-credential2" /authn-jwt-gitlab)
+    - USER_NAME=$(CONJUR_SECRET_ID="Dev-Team-credential1" /authn-jwt-gitlab)
+    - export TEST_USERNAME=$USER_NAME
+    - PASSWORD=$(CONJUR_SECRET_ID="Dev-Team-credential2" /authn-jwt-gitlab)
+    - export TEST_PASSWORD=$PASSWORD
 ```
 
 ## Support

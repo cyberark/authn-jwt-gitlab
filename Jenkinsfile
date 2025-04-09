@@ -50,11 +50,11 @@ pipeline {
 
     stage('Build while unit testit testing') {
       parallel {
-        stage('Golang 1.22.7') {
+        stage('Golang 1.23.7') {
           steps {
             script {
               INFRAPOOL_EXECUTORV2_AGENT_0.agentSh './bin/test.sh'
-              INFRAPOOL_EXECUTORV2_AGENT_0.agentStash name: 'output-xml', includes: 'output/1.22.7/*.xml'
+              INFRAPOOL_EXECUTORV2_AGENT_0.agentStash name: 'output-xml', includes: 'output/1.23.7/*.xml'
             }
           }
         }
@@ -120,9 +120,9 @@ pipeline {
   post {
     always {
       unstash 'output-xml'
-      junit 'output/1.22.7/junit.xml'
-      cobertura autoUpdateHealth: false, autoUpdateStability: false, coberturaReportFile: 'output/1.22.7/coverage.xml', conditionalCoverageTargets: '30, 0, 0', failUnhealthy: false, failUnstable: false, lineCoverageTargets: '30, 0, 0', maxNumberOfBuilds: 0, methodCoverageTargets: '30, 0, 0', onlyStable: false, sourceEncoding: 'ASCII', zoomCoverageChart: false
-      codacy action: 'reportCoverage', filePath: "output/1.22.7/coverage.xml"
+      junit 'output/1.23.7/junit.xml'
+      cobertura autoUpdateHealth: false, autoUpdateStability: false, coberturaReportFile: 'output/1.23.7/coverage.xml', conditionalCoverageTargets: '30, 0, 0', failUnhealthy: false, failUnstable: false, lineCoverageTargets: '30, 0, 0', maxNumberOfBuilds: 0, methodCoverageTargets: '30, 0, 0', onlyStable: false, sourceEncoding: 'ASCII', zoomCoverageChart: false
+      codacy action: 'reportCoverage', filePath: "output/1.23.7/coverage.xml"
 
       releaseInfraPoolAgent(".infrapool/release_agents")
     }
