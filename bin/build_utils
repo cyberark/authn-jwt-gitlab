@@ -7,6 +7,16 @@ function version_tag() {
   git rev-parse --short=7 HEAD
 }
 
+function version() {
+  local version_file
+  version_file=$(repo_root)/VERSION
+  if [[ -f $version_file ]]; then
+    cat $version_file
+  else
+    echo "unreleased"
+  fi
+}
+
 function retrieve_cyberark_ca_cert() {
   # On CyberArk dev laptops, golang module dependencies are downloaded with a
   # corporate proxy in the middle. For these connections to succeed we need to

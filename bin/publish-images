@@ -18,8 +18,9 @@ function print_help() {
   echo " edge: publish images as edge versions to registry.tld and dockerhub"
   echo " promote: publish images as a promotion (latest and less specific versions) to registry.tld and dockerhub"
   echo " redhat: publish image to redhat registry"
-  echo " version=VERSION: specify version number to use"
   echo " base-version=VERSION: specify base image version number to use to apply tags to"
+  echo " --source-version <VERSION>: specify version number of local image"
+  echo " --target-version <VERSION>: specify version number of remote image"
   echo " target: target"
 }
 
@@ -28,9 +29,9 @@ PUBLISH_INTERNAL=false
 PROMOTE=false
 REDHAT=false
 DOCKERHUB=false
-VERSION=$(<VERSION)
 
 LOCAL_TAG="$(version_tag)"
+OS_LIST="ubuntu alpine ubi"
 
 for arg in "$@"; do
   case $arg in
@@ -46,16 +47,20 @@ for arg in "$@"; do
       PROMOTE=true
       shift
       ;;
+    --source-version)
+      SOURCE_ARG="$2"
+      shift
+      ;;
+    --target-version)
+      TARGET_ARG="$2"
+      shift
+      ;;
     dockerhub )
       DOCKERHUB=true
       shift
       ;;
     --redhat )
       REDHAT=true
-      shift
-      ;;
-    version=* )
-      VERSION="${arg#*=}"
       shift
       ;;
     base-version=* )
@@ -72,66 +77,74 @@ done
 
 echo " Check the Local Tag value :- ${LOCAL_TAG}"
 
-# IMAGE_NAME="cyberark/authn-jwt-gitlab"
+if [[ "${JOB_NAME:-}" != cyberark--authn-jwt-gitlab/* ]]; then
+  DOCKERHUB=false
+fi
 
-  Stringval="ubuntu alpine ubi"
-  for target in $Stringval; do
-    LOCAL_IMAGE="authn-jwt-gitlab:${target}$(project_version_with_commit)"
+function tag_and_push() {
+  local src_image=$1
+  local dest_image=$2
+  echo "Tagging ${src_image} as ${dest_image} and pushing..."
+  docker tag "${src_image}" "${dest_image}"
+  docker push "${dest_image}"
+}
 
-    # Normalize version number in the case of '+' included
-    VERSION="$(echo -n "${VERSION}" | tr "+" "_")"
-
-    # Don't publish to DockerHub unless the build is in the main authn-jwt-gitlab repo
-    if [[ "${JOB_NAME}" != cyberark--authn-jwt-gitlab/* ]];
-    then
-      DOCKERHUB=false
-    fi
-
-    # Only push SHA images on internal
-    if [[ "${PUBLISH_INTERNAL}" = true ]]; then
-      echo "Pushing ${LOCAL_IMAGE} tagged images to registry.tld..."
-      # Always push SHA versioned images internally
-      tag_and_push "${LOCAL_IMAGE}" "registry.tld/authn-jwt-gitlab:${target}$(project_version_with_commit)"   # authn-jwt-gitlab:1.0.0-e917482
-
-    fi
+if [[ "$PUBLISH_INTERNAL" = true ]]; then
+  echo "Publishing internal images with SHA tags..."
+  echo "version: $(version)"
+  for target in $OS_LIST; do
+    local_image="authn-jwt-gitlab:${target}$(project_version_with_commit)"
+    registry_image="registry.tld/authn-jwt-gitlab:${target}-$(version)"
+    tag_and_push "${local_image}" "${registry_image}"
   done
+fi
 
-#  ========== To Do =============
-# if [[ "${PUBLISH_EDGE}" = true ]]; then
-#   echo "Pushing edge versions..."
+if [[ "$PUBLISH_EDGE" = true ]]; then
+  echo "Publishing edge/release images for version $(version)..."
+  REMOTE_TAG=edge
+  readonly TAGS=(
+    "$(version)"
+    "$REMOTE_TAG"
+  )
+  for target in $OS_LIST; do
+    local_image="authn-jwt-gitlab:${target}$(project_version_with_commit)"
+    registry_base="registry.tld/authn-jwt-gitlab"
+    for ver in "${TAGS[@]}" ; do
+      tag_and_push "${local_image}" "${registry_base}:${target}-${ver}"
+      if [[ "$DOCKERHUB" = true ]]; then
+        tag_and_push "${local_image}" "cyberark/authn-jwt-gitlab:${target}-${ver}"
+      fi
+    done
+  done
+fi
 
-#   # Publish release specific versions internally
-#   echo "Pushing ${VERSION} to registry.tld..."
-#   tag_and_push "${VERSION}" "${LOCAL_IMAGE}" "registry.tld/${IMAGE_NAME}"
-#   tag_and_push "${VERSION}" "${RH_LOCAL_IMAGE}" "registry.tld/authn-jwt-gitlab-ubi"
+if [[ "$PROMOTE" = true ]]; then
+  if [[ -z ${SOURCE_ARG:-} || -z ${TARGET_ARG:-} ]]; then
+  echo "When promoting, --source-version and --targe-version flags are required."
+  print_help
+  exit 1
+  fi
 
-#   # Push image to internal registry
-#   tag_and_push "edge" "${LOCAL_IMAGE}" "registry.tld/${IMAGE_NAME}"
-#   tag_and_push "edge" "${RH_LOCAL_IMAGE}" "registry.tld/authn-jwt-gitlab-ubi"
+  # Update vars to utilize utils
+  SOURCE_TAG=$SOURCE_ARG
+  REMOTE_TAG=$TARGET_ARG
 
-#   # Publish release specific and edge tags to dockerhub
-#   if [[ "${DOCKERHUB}" = true ]]; then
-#     tag_and_push "${VERSION}" "${LOCAL_IMAGE}" "${IMAGE_NAME}"
-#     tag_and_push "edge" "${LOCAL_IMAGE}" "${IMAGE_NAME}"
-#   fi
-# fi
-
-#  ========== To Do =============
-# if [[ "${PROMOTE}" = true ]]; then
-#   echo "Promoting image to ${VERSION}"
-
-#   # Push latest, 1.x.y, 1.x, and 1 images
-#   readarray -t prefix_versions < <(gen_versions "${VERSION}")
-
-#   for version in latest "${prefix_versions[@]}"; do
-#     tag_and_push "${VERSION}" "${LOCAL_IMAGE}" "registry.tld/${IMAGE_NAME}"
-#     tag_and_push "${VERSION}" "${RH_LOCAL_IMAGE}" "registry.tld/authn-jwt-gitlab-ubi"
-
-#     if [[ "${DOCKERHUB}" ]]; then
-#       tag_and_push "${VERSION}" "${LOCAL_IMAGE}" "${IMAGE_NAME}"
-#     fi
-#   done
-# fi
+  echo "Promoting image to $REMOTE_TAG"
+  readonly TAGS=(
+    "$REMOTE_TAG"
+    "latest"
+  )
+  registry_base="registry.tld/authn-jwt-gitlab"
+  for target in $OS_LIST; do
+    local_image="authn-jwt-gitlab:${target}$(project_version_with_commit)"
+    for ver in "${TAGS[@]}" $(gen_versions "$REMOTE_TAG"); do
+      tag_and_push "${local_image}" "${registry_base}:${target}-${ver}"
+      if [[ "$DOCKERHUB" = true ]]; then
+        tag_and_push "${local_image}" "cyberark/authn-jwt-gitlab:${target}${ver}"
+      fi
+    done
+  done
+fi
 
 #  ========== To Do =============
 # if [[ "${REDHAT}" = true ]]; then
