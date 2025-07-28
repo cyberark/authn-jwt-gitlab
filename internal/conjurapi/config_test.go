@@ -6,6 +6,7 @@ import (
 	"os"
 	"path"
 	"testing"
+	"encoding/base64"
 
 	"github.com/stretchr/testify/assert"
 )
@@ -261,4 +262,15 @@ func TestConfig_Conjurrc(t *testing.T) {
 			})
 		}
 	})
+}
+
+func TestBuildAndCacheTelemetryHeader(t *testing.T) {
+	config := Config{}
+	expected := "in=Gitlab&iv=0.0.1&it=cybr-secretsmanager&vn=Gitlab"
+	encodedExpected := base64.RawURLEncoding.EncodeToString([]byte(expected))
+
+	result := config.BuildAndCacheTelemetryHeader()
+	if result != encodedExpected {
+		t.Errorf("Expected '%s', got '%s'", encodedExpected, result)
+	}
 }

@@ -6,6 +6,8 @@ COPY . .
 RUN go get -d -v ./...
 RUN go install -v ./...
 
+COPY VERSION /go/src/github.com/cyberark/authn-jwt-gitlab/VERSION
+
 FROM golang:1.23.7-alpine AS builder-alpine
 
 WORKDIR /go/src/github.com/cyberark/authn-jwt-gitlab
@@ -14,11 +16,14 @@ COPY . .
 RUN go get -d -v ./...
 RUN go install -v ./...
 
+COPY VERSION /go/src/github.com/cyberark/authn-jwt-gitlab/VERSION
+
 FROM ubuntu:24.04 AS ubuntu
 
 RUN groupadd -r appuser && useradd -r -g appuser appuser
 
 COPY --from=builder /go/bin/authn-jwt-gitlab /authn-jwt-gitlab
+COPY --from=builder /go/src/github.com/cyberark/authn-jwt-gitlab/VERSION /VERSION
 
 RUN apt-get update && \
     apt-get install -y ca-certificates && \
@@ -39,6 +44,7 @@ RUN apk update && \
     update-ca-certificates
 
 COPY --from=builder-alpine /go/bin/authn-jwt-gitlab /authn-jwt-gitlab
+COPY --from=builder-alpine /go/src/github.com/cyberark/authn-jwt-gitlab/VERSION /VERSION
 
 USER appuser
 
@@ -53,6 +59,7 @@ RUN yum -y update && \
 RUN groupadd -r appuser && useradd -r -g appuser appuser
 
 COPY --from=builder /go/bin/authn-jwt-gitlab /authn-jwt-gitlab
+COPY --from=builder /go/src/github.com/cyberark/authn-jwt-gitlab/VERSION /VERSION
 
 USER appuser
 

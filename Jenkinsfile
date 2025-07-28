@@ -26,13 +26,6 @@ pipeline {
   }
 
   stages {
-    // Generates a VERSION file based on the current build number and latest version in CHANGELOG.md
-    // stage('Validate Changelog and set version') {
-    //   steps {
-    //     updateVersion("CHANGELOG.md", "${BUILD_NUMBER}")
-    //   }
-    // }
-
     stage('Get latest upstream dependencies') {
       steps {
         sh './bin/updateGoDependencies.sh -g "${WORKSPACE}/go.mod"'
@@ -45,6 +38,13 @@ pipeline {
           // Request ExecutorV2 agents for 1 hour(s)
           INFRAPOOL_EXECUTORV2_AGENT_0 = getInfraPoolAgent.connected(type: "ExecutorV2", quantity: 1, duration: 1)[0]
         }
+      }
+    }
+
+    // Generates a VERSION file based on the current build number and latest version in CHANGELOG.md
+    stage('Validate Changelog and set version') {
+      steps {
+        updateVersion(INFRAPOOL_EXECUTORV2_AGENT_0, "CHANGELOG.md", "${BUILD_NUMBER}")
       }
     }
 
