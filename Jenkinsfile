@@ -176,7 +176,7 @@ pipeline {
         script {
           release(INFRAPOOL_EXECUTORV2_AGENT_0) { billOfMaterialsDirectory, assetDirectory, toolsDirectory ->
             INFRAPOOL_EXECUTORV2_AGENT_0.agentSh """
-              export PATH="${toolsDirectory}/bin:\$PATH" &&
+              export PATH="${toolsDirectory}/bin:${PATH}" &&
               go-bom --tools "${toolsDirectory}" --go-mod ./go.mod --image "golang" --output "${billOfMaterialsDirectory}/go-mod-bom.json"
             """
             INFRAPOOL_EXECUTORV2_AGENT_0.agentSh "./bin/publish-images edge"
