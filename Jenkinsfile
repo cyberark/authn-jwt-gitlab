@@ -167,8 +167,9 @@ pipeline {
 
     stage('Release') {
       when {
-        expression {
-          MODE == "RELEASE"
+        allOf {
+          branch 'main' 
+          expression { MODE == "RELEASE" }
         }
       }
       steps {
